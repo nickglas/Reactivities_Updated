@@ -15,10 +15,11 @@ interface Props {
   closeForm: () => void
   createOrdEdit: (activity: Activity) => void
   deleteActivity: (id: string) => void
+  submitting: boolean
 }
 
 
-const ActivityDashboard: React.FC<Props> = ({ activities, createOrdEdit, deleteActivity, selectActivity, selectedActivity, cancelSelectActivity, editMode, openForm, closeForm }) => {
+const ActivityDashboard: React.FC<Props> = ({ activities, submitting, createOrdEdit, deleteActivity, selectActivity, selectedActivity, cancelSelectActivity, editMode, openForm, closeForm }) => {
   return (
     <Grid>
       <Grid.Column width='10'>
@@ -26,6 +27,7 @@ const ActivityDashboard: React.FC<Props> = ({ activities, createOrdEdit, deleteA
           activities={activities}
           selectActivity={selectActivity}
           deleteActivity={deleteActivity}
+          submitting={submitting}
         />
       </Grid.Column>
       <Grid.Column width='6'>
@@ -37,7 +39,7 @@ const ActivityDashboard: React.FC<Props> = ({ activities, createOrdEdit, deleteA
           />
         }
         {editMode &&
-          <ActivityForm closeForm={closeForm} activity={selectedActivity} createOrEdit={createOrdEdit} />}
+          <ActivityForm submitting={submitting} closeForm={closeForm} activity={selectedActivity} createOrEdit={createOrdEdit} />}
       </Grid.Column>
     </Grid>
   )
