@@ -39,7 +39,6 @@ export default class ActivityStore {
       this.loadingInitial = true
       try {
         activity = await agent.Activities.details(id)
-        console.log('api' + activity)
         this.setActivity(activity)
         this.selectedActivity = activity
         this.setLoadingInitial(false)
