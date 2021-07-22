@@ -18,7 +18,7 @@ const ActivityDashboard = () => {
   }, [loadActivites, activityStore, activityRegistery])
 
   if (activityStore.loadingInitial) {
-    return <LoadingComponent inverted={true} content={'Loading activities'} />
+    return <LoadingComponent inverted={true} content={'Loading activities...'} />
   }
 
 
