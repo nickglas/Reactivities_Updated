@@ -452,3 +452,6 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 API/reactivities.db
+API/reactivities.db-shm
+.gitignore
+API/reactivities.db-wal

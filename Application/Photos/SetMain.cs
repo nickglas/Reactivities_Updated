@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
@@ -30,14 +31,11 @@ namespace Application.Photos
             
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
+                //getting user
                 var user = await _context.Users.Include(x => x.Photos)
                     .FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName(), cancellationToken);
-
-                if (user == null)
-                {
-                    return null;
-                }
-
+                
+                //getting the requested NEW main photo
                 var photo = user.Photos.FirstOrDefault(x => x.Id == request.Id);
 
                 if (photo == null)
@@ -45,17 +43,17 @@ namespace Application.Photos
                     return null;
                 }
 
+                //getting old main
                 var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
-
+                
+                //setting old main to normal if exist
                 if (currentMain != null)
                 {
                     currentMain.IsMain = false;
                 }
-                else
-                {
-                    currentMain.IsMain = true;
-                }
 
+                photo.IsMain = true;
+                
                 var success = await _context.SaveChangesAsync(cancellationToken) > 0;
 
                 if (success)
