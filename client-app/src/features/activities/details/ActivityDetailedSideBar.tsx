@@ -3,12 +3,32 @@ import { Segment, List, Label, Item, Image } from 'semantic-ui-react'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { Activity } from '../../../app/models/activity'
+import { useEffect } from 'react'
+import { Profile } from '../../../app/models/profile'
 
 interface Props{
   activity: Activity
 }
 
+
+
 export default observer(function ActivityDetailedSidebar ( {activity: {attendees, host}} : Props ) {
+
+    function filterAttendees(): Profile[]{
+        const activityAttendees: Profile[] = []
+        const activityHost = attendees.find(x=>x.username === host!.username)
+
+        activityAttendees.push(activityHost!)
+
+        attendees.forEach(attendee => {
+            if (attendee.username !== host?.username) {
+                activityAttendees.push(attendee)
+            }
+        })
+
+        return activityAttendees
+    }
+
     if (!attendees) {
         return null
     }
@@ -26,7 +46,8 @@ export default observer(function ActivityDetailedSidebar ( {activity: {attendees
             </Segment>
             <Segment attached>
                 <List relaxed divided>
-                  {attendees.map(attendee => (
+
+                  {filterAttendees().map(attendee => (
                     <Item style={{ position: 'relative' }} key={attendee.username}>
                     {attendee.username === host?.username &&
                     <Label

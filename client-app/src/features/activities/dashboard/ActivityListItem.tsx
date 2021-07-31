@@ -4,6 +4,7 @@ import { Button, Icon, Item, ItemGroup, Label, Segment } from 'semantic-ui-react
 import { Activity } from '../../../app/models/activity'
 import {format} from 'date-fns'
 import ActivityListItemAttendee from './ActivityListItemAttendee'
+import { observer } from 'mobx-react-lite'
 
 
 interface Props {
@@ -63,4 +64,4 @@ const ActivityListItem: React.FC<Props> = ({ activity }) => {
   )
 }
 
-export default ActivityListItem
+export default observer(ActivityListItem)

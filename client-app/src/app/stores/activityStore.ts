@@ -31,6 +31,28 @@ export default class ActivityStore {
     )
   }
 
+  updateActivityUser = (profile: Partial<Profile>) => {
+    runInAction(() => {
+      this.activityRegistery.forEach((activity: Activity, key: string) => {
+        if (activity.host!.username === profile.username) {
+          activity.host = {...activity.host!, ...profile}
+        }
+      })
+    })     
+  }
+
+  updateAttendeeUser = (profile: Partial<Profile>) => {
+    runInAction(() => {
+      this.activityRegistery.forEach((activity: Activity, key: string) => {
+        if (activity.attendees.find(x=>x.username === profile.username) !== undefined) {
+          const indexer = activity.attendees.findIndex(x=>x.username === profile.username)
+          const updated = {...activity.attendees.find(x=>x.username === profile.username)!, ...profile}
+          activity.attendees[indexer] = updated
+        }
+      })
+    })
+  }
+
   loadActivites = async () => {
     this.loadingInitial = true
     try {
@@ -177,6 +199,10 @@ export default class ActivityStore {
         this.loading = false
       })
     }
+  }
+
+  clearSelectedActivity = () => {
+    this.selectedActivity = undefined
   }
 
 }

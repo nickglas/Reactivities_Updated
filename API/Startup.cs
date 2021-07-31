@@ -12,6 +12,7 @@ using Application.Core;
 using API.Extensions;
 using FluentValidation.AspNetCore;
 using API.Middleware;
+using API.SignalR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 
@@ -64,7 +65,11 @@ namespace API
             
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chat");
+            });
         }
     }
 }
