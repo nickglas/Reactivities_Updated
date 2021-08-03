@@ -57,6 +57,7 @@ export default class ActivityStore {
     this.loadingInitial = true
     try {
       const activities = await agent.Activities.list()
+      console.warn(activities)
       activities.forEach(activity => {
         this.setActivity(activity)
       })
@@ -203,6 +204,17 @@ export default class ActivityStore {
 
   clearSelectedActivity = () => {
     this.selectedActivity = undefined
+  }
+
+  updateAttendeeFollowing = (username: string) => {
+    this.activityRegistery.forEach((activity) => {
+      activity.attendees.forEach((attendee) => {
+        if (attendee.username === username) {
+          attendee.following ? attendee.followersCount-- : attendee.followersCount++
+          attendee.following = !attendee.following
+        }
+      })
+    })
   }
 
 }

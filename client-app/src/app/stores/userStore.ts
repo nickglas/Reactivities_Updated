@@ -65,4 +65,8 @@ export default class UserStore{
     if (this.user) this.user.displayName = name;
    }
 
+   redirectToAccount = (username: string) =>{
+     history.push(`/profiles/${username}`)
+   }
+
 }
