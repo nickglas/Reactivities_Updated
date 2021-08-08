@@ -1,5 +1,3 @@
-﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using Application.Profiles;
 using Microsoft.AspNetCore.Mvc;
@@ -11,13 +9,19 @@ namespace API.Controllers
         [HttpGet("{username}")]
         public async Task<IActionResult> GetProfile(string username)
         {
-            return HandleResult(await Mediator.Send(new Details.Query() {Username = username}));
+            return HandleResult(await Mediator.Send(new Details.Query { Username = username }));
+        }
+
+        [HttpGet("{username}/activities")]
+        public async Task<IActionResult> GetProfileActivities(string predicate, string username)
+        {
+            return HandleResult(await Mediator.Send(new ListActivities.Query
+                {Predicate = predicate, Username = username}));
         }
 
         [HttpPut]
         public async Task<IActionResult> Edit(Edit.Command command)
         {
-            Thread.Sleep(3000);
             return HandleResult(await Mediator.Send(command));
         }
     }

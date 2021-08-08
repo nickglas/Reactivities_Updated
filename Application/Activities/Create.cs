@@ -29,29 +29,29 @@ namespace Application.Activities
         {
             private readonly DataContext _context;
             private readonly IUserAccessor _userAccessor;
-
             public Handler(DataContext context, IUserAccessor userAccessor)
             {
-                _context = context;
                 _userAccessor = userAccessor;
+                _context = context;
             }
 
             public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var user = await _context.Users.FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName(),cancellationToken);
+                var user = await _context.Users.FirstOrDefaultAsync(x => 
+                    x.UserName == _userAccessor.GetUsername());
 
-                var attendee = new ActivityAttendee()
+                var attendee = new ActivityAttendee
                 {
                     AppUser = user,
                     Activity = request.Activity,
                     IsHost = true
                 };
-                
+
                 request.Activity.Attendees.Add(attendee);
-                
+
                 _context.Activities.Add(request.Activity);
 
-                var result = await _context.SaveChangesAsync(cancellationToken) > 0;
+                var result = await _context.SaveChangesAsync() > 0;
 
                 if (!result) return Result<Unit>.Failure("Failed to create activity");
 

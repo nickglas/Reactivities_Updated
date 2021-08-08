@@ -1,6 +1,7 @@
 using Application.Activities;
 using Application.Core;
 using Application.Interfaces;
+using AutoMapper;
 using Infrastructure.Photos;
 using Infrastructure.Security;
 using MediatR;
@@ -12,36 +13,38 @@ using Persistence;
 
 namespace API.Extensions
 {
-  public static class ApplicationServiceExtensions
-  {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services, IConfiguration config)
+    public static class ApplicationServiceExtensions
     {
-      services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
-      services.AddDbContext<DataContext>(opt =>
-      {
-        opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
-      });
-      services.AddCors(opt =>
-      {
-        opt.AddPolicy("CorsPolicy",
-                  policy =>
-                  {
+        public static IServiceCollection AddApplicationServices(this IServiceCollection services, 
+            IConfiguration config)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
+            });
+            services.AddDbContext<DataContext>(opt => 
+            {
+                opt.UseSqlite(config.GetConnectionString("DefaultConnection"));
+            });
+            services.AddCors(opt => 
+            {
+                opt.AddPolicy("CorsPolicy", policy => 
+                {
                     policy
-                              .AllowAnyMethod()
-                              .AllowAnyHeader()
-                                .AllowCredentials()
-                                .WithOrigins("http://217.123.27.153:3000", "https://217.123.27.153:3000", "https://217.123.27.153:5001", "https://localhost:5001", "http://localhost:3000");
-                  });
-      });
-      services.AddMediatR(typeof(List.Handler).Assembly);
-      services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-      services.AddScoped<IUserAccessor, UserAccessor>();
-      services.AddScoped<IPhotoAccessor, PhotoAccessor>();
-      services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials()
+                        .WithOrigins("http://localhost:3000");
+                });
+            });
+            services.AddMediatR(typeof(List.Handler).Assembly);
+            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            services.AddScoped<IUserAccessor, UserAccessor>();
+            services.AddScoped<IPhotoAccessor, PhotoAccessor>();
+            services.Configure<CloudinarySettings>(config.GetSection("Cloudinary"));
+            services.AddSignalR();
 
-      services.AddSignalR();
-
-      return services;
+            return services;
+        }
     }
-  }
 }

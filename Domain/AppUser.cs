@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 
 namespace Domain
 {

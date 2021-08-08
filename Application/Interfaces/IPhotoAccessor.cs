@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Application.Photos;
 using Microsoft.AspNetCore.Http;
 

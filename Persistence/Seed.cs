@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace Persistence
 {
-   public class Seed
+    public class Seed
     {
         public static async Task SeedData(DataContext context,
             UserManager<AppUser> userManager)

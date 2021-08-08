@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Application.Interfaces;
 using Application.Photos;
@@ -11,12 +11,9 @@ namespace Infrastructure.Photos
 {
     public class PhotoAccessor : IPhotoAccessor
     {
-        private readonly IOptions<CloudinarySettings> _config;
         private readonly Cloudinary _cloudinary;
-
         public PhotoAccessor(IOptions<CloudinarySettings> config)
         {
-            _config = config;
             var account = new Account(
                 config.Value.CloudName,
                 config.Value.ApiKey,
@@ -29,26 +26,25 @@ namespace Infrastructure.Photos
         {
             if (file.Length > 0)
             {
-                await using (var stream = file.OpenReadStream())
+                await using var stream = file.OpenReadStream();
+                var uploadParams = new ImageUploadParams
                 {
-                    var uploadParams = new ImageUploadParams()
-                    {
-                        File = new FileDescription(file.FileName, stream),
-                        Transformation = new Transformation().Height(500).Width(500).Crop("fill")
-                    };
-                    var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+                    File = new FileDescription(file.FileName, stream),
+                    Transformation = new Transformation().Height(500).Width(500).Crop("fill")
+                };
 
-                    if (uploadResult.Error != null)
-                    {
-                        throw new Exception(uploadResult.Error.Message);
-                    }
+                var uploadResult = await _cloudinary.UploadAsync(uploadParams);
 
-                    return new PhotoUploadResult()
-                    {
-                        PublicId = uploadResult.PublicId,
-                        Url = uploadResult.SecureUrl.ToString()
-                    };
+                if (uploadResult.Error != null)
+                {
+                    throw new Exception(uploadResult.Error.Message);
                 }
+
+                return new PhotoUploadResult
+                {
+                    PublicId = uploadResult.PublicId,
+                    Url = uploadResult.SecureUrl.ToString()
+                };
             }
 
             return null;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Core;
@@ -19,53 +19,50 @@ namespace Application.Comments
             public string Body { get; set; }
             public Guid ActivityId { get; set; }
         }
-        
+
         public class CommandValidator : AbstractValidator<Command>
         {
             public CommandValidator()
             {
-                RuleFor(x => x.ActivityId).NotEmpty();
+                RuleFor(x => x.Body).NotEmpty();
             }
         }
-        
+
         public class Handler : IRequestHandler<Command, Result<CommentDto>>
         {
+            private readonly IUserAccessor _userAccessor;
             private readonly DataContext _context;
             private readonly IMapper _mapper;
-            private readonly IUserAccessor _userAccessor;
-
             public Handler(DataContext context, IMapper mapper, IUserAccessor userAccessor)
             {
-                _context = context;
                 _mapper = mapper;
+                _context = context;
                 _userAccessor = userAccessor;
             }
-            
+
             public async Task<Result<CommentDto>> Handle(Command request, CancellationToken cancellationToken)
             {
-                var activity =
-                    await _context.Activities.FirstOrDefaultAsync(x => x.Id == request.ActivityId, cancellationToken);
+                var activity = await _context.Activities.FindAsync(request.ActivityId);
 
                 if (activity == null) return null;
 
-                var user = await _context.Users.Include(x => x.Photos)
-                    .FirstOrDefaultAsync(x => x.UserName == _userAccessor.GetUserName(), cancellationToken);
+                var user = await _context.Users
+                    .Include(p => p.Photos)
+                    .SingleOrDefaultAsync(x => x.UserName == _userAccessor.GetUsername());
 
-                if (user == null) return null;
-
-                var comment = new Comment()
+                var comment = new Comment
                 {
-                    Activity = activity,
                     Author = user,
-                    Body = request.Body,
+                    Activity = activity,
+                    Body = request.Body
                 };
-                
-                activity.Comments.Add(comment);
-                var result = await _context.SaveChangesAsync(cancellationToken) > 0;
 
-                Console.WriteLine("RETURNING");
-                if(result) return Result<CommentDto>.Success(_mapper.Map<CommentDto>(comment));
-                
+                activity.Comments.Add(comment);
+
+                var success = await _context.SaveChangesAsync() > 0;
+
+                if (success) return Result<CommentDto>.Success(_mapper.Map<CommentDto>(comment));
+
                 return Result<CommentDto>.Failure("Failed to add comment");
             }
         }
