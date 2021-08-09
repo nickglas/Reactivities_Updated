@@ -76,10 +76,9 @@ namespace API
             }
             else
             {
-                app.UseHsts();
                 app.Use(async (context, next) =>
                 {
-                    context.Response.Headers.Add("Strict-Transport-Policy", "max-age=31536000");
+                    context.Response.Headers.Add("Strict-Transport-Security", "max-age=31536000");
                     await next.Invoke();
                 });
             }
