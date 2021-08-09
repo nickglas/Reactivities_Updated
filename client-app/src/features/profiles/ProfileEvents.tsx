@@ -29,7 +29,7 @@ const ProfileEvents = ({ profile }: Props) => {
   } = useStore();
 
   useEffect(() => {
-    loadActivity(profile.username);
+    loadActivity(profile.username, 'future');
     return () =>{
       clearProfileActivities()
     }
