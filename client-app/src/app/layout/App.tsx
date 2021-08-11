@@ -27,6 +27,8 @@ function App() {
     } else {
       userStore.getFacebookLoginStatus().then(() => {
         commonStore.setAppLoaded() 
+      }).catch(() => {
+        commonStore.setAppLoaded() 
       })
     }
   }, [commonStore, userStore])
